@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/courses")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CourseController {
     private final CourseService courseService;
@@ -26,12 +26,11 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @PostMapping("/api/students/{studentUuid}/courses")
-    public ResponseEntity<CourseResponseDTO> createCourse(@PathVariable UUID studentUuid, @Valid @RequestBody CourseRequestDTO dto){
+    @PostMapping
+    public ResponseEntity<CourseResponseDTO> createCourse( @Valid @RequestBody CourseRequestDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        courseService.createCourseForStudent(
-                                studentUuid,
+                        courseService.createCourse(
                                 dto
                         )
                 );

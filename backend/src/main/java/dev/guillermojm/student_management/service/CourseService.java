@@ -1,5 +1,6 @@
 package dev.guillermojm.student_management.service;
 
+import dev.guillermojm.student_management.auth.service.AuthenticatedUserService;
 import dev.guillermojm.student_management.dto.CourseAdminResponseDTO;
 import dev.guillermojm.student_management.dto.CourseRequestDTO;
 import dev.guillermojm.student_management.dto.CourseResponseDTO;
@@ -24,19 +25,23 @@ public class CourseService {
     private final StudentRepository studentRepository;
     private final CourseMapper courseMapper;
     private final GoalMapper goalMapper;
+    private final AuthenticatedUserService  authenticatedUserService;
 
-    public CourseService(CourseRepository courseRepository, StudentRepository studentRepository, CourseMapper courseMapper, GoalMapper goalMapper) {
+    public CourseService(
+            CourseRepository courseRepository,
+            StudentRepository studentRepository,
+            CourseMapper courseMapper,
+            GoalMapper goalMapper,
+            AuthenticatedUserService authenticatedUserService) {
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.courseMapper = courseMapper;
         this.goalMapper = goalMapper;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
-    public CourseResponseDTO createCourseForStudent(UUID studentUuid, CourseRequestDTO courseRequestDTO){
-        Student student = studentRepository
-                .findByUuid(studentUuid)
-                .orElseThrow( () ->
-                        new ValueNotFoundException("Student with id: " + studentUuid + " not found."));;
+    public CourseResponseDTO createCourse( CourseRequestDTO courseRequestDTO){
+        Student student = authenticatedUserService.getAuthenticatedStudent();
 
         Course course = new Course(
                 courseRequestDTO.name(),
