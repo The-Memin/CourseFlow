@@ -6,7 +6,8 @@ import { courseService } from "@/services/course.service";
 export default function CreateCourse() {
   const handleCreateCourse = async (values: CreateCourseForm) => {
     const mapperValues = toCreateCourseRequest(values);
-    const result = await courseService.create(mapperValues);
+    const result = await courseService.createCourse(mapperValues);
+    console.log(result);
   };
 
   return (

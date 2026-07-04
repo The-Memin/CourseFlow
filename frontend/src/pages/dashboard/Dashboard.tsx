@@ -1,20 +1,34 @@
 import StatsCard from "@/components/dashboard/StatsCard";
 import CourseCard from "@/components/courses/CourseCard";
-import { mockCourses } from "@/mocks/courses";
 
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 
-export default function Dashboard() {
-  const totalCourses = mockCourses.length;
-  const activeCourses = mockCourses.filter((c) => c.status === "IN_PROGRESS").length;
-  const completedCourses = mockCourses.filter((c) => c.status === "COMPLETED").length;
+import { courseService } from "@/services/course.service";
+import { useEffect, useState } from "react";
+import type { Course } from "@/types/course";
 
-  const averageProgress = Math.round(
-        mockCourses.reduce((acc, course) =>
-          acc + calculateCourseProgress(course)
-        , 0
-      ) / totalCourses
-    );
+export default function Dashboard() {
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const fetchedCourses = await courseService.getCourses();
+        setCourses(fetchedCourses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+
+  const averageProgress = courses.length > 0 ? Math.round(
+    courses.reduce((acc, course) =>
+      acc + calculateCourseProgress(course)
+    , 0
+  ) / courses.length) : 0;
 
   return (
     <div className="space-y-8">
@@ -34,17 +48,17 @@ export default function Dashboard() {
       >
         <StatsCard
           title="Total Courses"
-          value={totalCourses}
+          value={courses.length}
         />
 
         <StatsCard
           title="Active Courses"
-          value={activeCourses}
+          value={courses.filter((c) => c.status === "IN_PROGRESS").length}
         />
 
         <StatsCard
           title="Completed"
-          value={completedCourses}
+          value={courses.filter((c) => c.status === "COMPLETED").length}
         />
 
         <StatsCard
@@ -66,7 +80,7 @@ export default function Dashboard() {
           xl:grid-cols-3
         "
         >
-          {mockCourses.slice(0, 3).map((course) => (
+          {courses.slice(0, 3).map((course) => (
             <CourseCard
               key={course.id}
               course={course}

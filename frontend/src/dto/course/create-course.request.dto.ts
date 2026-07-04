@@ -3,7 +3,7 @@ import type { GoalPriority, GoalUnit } from "@/types/goal";
 export interface CreateGoalRequest{
     name: string,
     description:string,
-    unit: GoalUnit,
+    goalUnit: GoalUnit,
     targetValue: number,
     priority: GoalPriority
 }

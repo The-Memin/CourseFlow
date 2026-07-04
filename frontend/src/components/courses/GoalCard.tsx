@@ -1,4 +1,4 @@
-import type { Goal } from "@/types/course";
+import { type Goal } from "@/types/goal";
 
 import {
   Card,
@@ -12,6 +12,7 @@ import { Badge } from "../ui/badge";
 import { goalUnitLabels } from "@/domain/goal/goal-unit";
 import { calculateGoalProgress } from "@/domain/course/course-progress";
 import { priorityConfig } from "@/domain/goal/goal-priority";
+import type { GoalPriority } from "@/types/goal";
 
 interface Props {
   goal: Goal;
@@ -19,7 +20,7 @@ interface Props {
 
 export default function GoalCard({ goal }: Props) {
     const progress = calculateGoalProgress(goal.currentValue, goal.targetValue);
-    const priority = priorityConfig[goal.priority];
+    const priority = priorityConfig[goal.priority as GoalPriority];
 
     return (
         <Card>

@@ -12,7 +12,7 @@ export function toCreateCourseRequest(form: CreateCourseForm): CreateCourseReque
             {
                 name: goal.name,
                 description: goal.description,
-                unit: goal.unit,
+                goalUnit: goal.unit,
                 targetValue: goal.targetValue,
                 priority: goal.priority
             }
@@ -21,6 +21,7 @@ export function toCreateCourseRequest(form: CreateCourseForm): CreateCourseReque
 }
 
 export function mapCourseDtoToCourse(dto: CourseResponseDto): Course{
+    console.log(dto);
     return {
     id: dto.uuid,
     name: dto.name,
@@ -32,7 +33,7 @@ export function mapCourseDtoToCourse(dto: CourseResponseDto): Course{
     updatedAt: dto.updatedAt,
 
     goals: dto.goals.map(goal => ({
-        id: goal.id,
+        id: goal.uuid,
         name: goal.name,
         description: goal.description,
 

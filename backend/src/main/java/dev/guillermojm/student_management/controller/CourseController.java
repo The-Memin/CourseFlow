@@ -6,6 +6,7 @@ import dev.guillermojm.student_management.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/courses")
-@CrossOrigin(origins = "http://localhost:5173")
 public class CourseController {
     private final CourseService courseService;
 
@@ -32,9 +32,16 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseResponseDTO>> getCourse(){
+    public ResponseEntity<List<CourseResponseDTO>> getCourses(){
         return ResponseEntity.ok(
                 courseService.getCoursesByStudent()
+        );
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable UUID uuid){
+        return ResponseEntity.ok(
+                courseService.getCourse(uuid)
         );
     }
 

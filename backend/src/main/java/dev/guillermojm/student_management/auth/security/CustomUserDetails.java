@@ -29,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
-                new SimpleGrantedAuthority(student.getRole().name())
+                new SimpleGrantedAuthority("ROLE_"+student.getRole().name())
         );
     }
 

@@ -6,6 +6,7 @@ import dev.guillermojm.student_management.auth.dto.RegisterRequestDTO;
 import dev.guillermojm.student_management.auth.exception.EmailAlreadyExistException;
 import dev.guillermojm.student_management.auth.jwt.JwtService;
 import dev.guillermojm.student_management.auth.mapper.StudentMapper;
+import dev.guillermojm.student_management.auth.mapper.UserResponseMapper;
 import dev.guillermojm.student_management.auth.security.CustomUserDetails;
 import dev.guillermojm.student_management.entity.Student;
 import dev.guillermojm.student_management.enums.Role;
@@ -24,9 +25,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final StudentMapper studentMapper;
+    private final UserResponseMapper userResponseMapper;
     private final JwtService jwtService;
 
-    public void register(RegisterRequestDTO request){
+    public AuthResponseDTO register(RegisterRequestDTO request){
         if(studentRepository.existsByEmail(request.email())){
             throw new EmailAlreadyExistException("Student with email " + request.email() + " already exists");
         }
@@ -37,6 +39,13 @@ public class AuthService {
         student.setRole(Role.USER);
 
         studentRepository.save(student);
+
+        String token  = jwtService.generateToken(student);
+
+        return new AuthResponseDTO(
+                token,
+                userResponseMapper.toDto(student)
+        );
     }
 
     public AuthResponseDTO login(LoginRequestDTO request){
@@ -48,6 +57,9 @@ public class AuthService {
         Student student = userDetails.getStudent();
 
         String token = jwtService.generateToken(student);
-        return new AuthResponseDTO(token);
+        return new AuthResponseDTO(
+                token,
+                userResponseMapper.toDto(student)
+        );
     }
 }

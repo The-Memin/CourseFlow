@@ -1,23 +1,44 @@
 import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import GoalCard from "@/components/courses/GoalCard";
-import { mockCourses } from "@/mocks/courses";
 import { statusConfig } from "@/domain/course/course-status";
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 import BackButton from "@/components/shared/BackButton";
 import { priorityConfig } from "@/domain/goal/goal-priority";
+import { useEffect, useState } from "react";
+import { courseService } from "@/services/course.service";
+import type { Course } from "@/types/course";
+import { Loader2 } from "lucide-react";
+import ErrorMessage from "@/components/shared/ErrorMessage";
+import NotFound from "@/components/shared/NotFound";
 
 export default function CourseDetail() {
-  const { id } = useParams();
-  const course = mockCourses.find((course) => course.id === id);
+  const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams<{ id: string }>();
 
-  if (!course) {
-    return (
-      <h1>
-        Course not found
-      </h1>
-    );
-  }
+  useEffect(() => {
+      const fetchCourse = async () => {
+          try {
+              const data = await courseService.getCourseById(id!);
+              setCourse(data);
+          } catch {
+              setError("Failed to load course.");
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchCourse();
+  }, [id]);
+
+  if (loading) return <Loader2 className="animate-spin mr-2 h-4 w-4"/>;
+;
+  if (error) return <ErrorMessage message={error} />;
+
+  if (!course) return <NotFound />;
+
 
   const progress = calculateCourseProgress(course);
   const status = statusConfig[course.status];

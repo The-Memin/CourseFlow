@@ -7,10 +7,12 @@ import dev.guillermojm.student_management.dto.GoalRequestDTO;
 import dev.guillermojm.student_management.entity.Course;
 import dev.guillermojm.student_management.entity.Goal;
 import dev.guillermojm.student_management.entity.Student;
+import dev.guillermojm.student_management.enums.CourseStatus;
 import dev.guillermojm.student_management.mapper.CourseMapper;
 import dev.guillermojm.student_management.mapper.GoalMapper;
 import dev.guillermojm.student_management.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 
@@ -32,7 +34,7 @@ public class CourseService {
         Course course = new Course(
                 courseRequestDTO.name(),
                 courseRequestDTO.description(),
-                courseRequestDTO.status(),
+                CourseStatus.NOT_STARTED,
                 student
         );
 

@@ -1,9 +1,6 @@
-import { createCourseMock } from "@/mocks/courses.mock";
 import type { CreateCourseRequest } from "@/dto/course/create-course.request.dto";
-import type { CreateCourseResponse } from "@/dto/course/create-course.response.dto";
 import type { CourseResponseDto } from "@/dto/course/course.response.dto";
 import { apiClient } from "@/lib/api-client";
-import { mockCourses } from "@/mocks/courses";
 import { mapCourseDtoToCourse } from "@/mappers/course.mapper";
 
 class CourseService{
@@ -15,16 +12,15 @@ class CourseService{
     }
 
     async getCourseById(id: string){
-        return mockCourses.find(course => course.id === id);
+        const courseDto: CourseResponseDto = await apiClient.get<CourseResponseDto>(`/courses/${id}`);
+        const mappedCourse = mapCourseDtoToCourse(courseDto);
+        return mappedCourse;
+        //return mockCourses.find((course) => course.id === id);
     }
 
     async createCourse(request: CreateCourseRequest){
-        console.log(request);
-
-        return{
-            success: true,
-            id: crypto.randomUUID()
-        };
+        const response = await apiClient.post("/courses", request);
+        return response;
     }
 }
 
