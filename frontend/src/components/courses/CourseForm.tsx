@@ -12,8 +12,6 @@ import { Plus } from "lucide-react";
 import GoalFormCard from "@/components/courses/forms/GoalFormCard";
 import { Button } from "@/components/ui/button";
 
-import { toast } from "sonner";
-
 interface CourseFormProps {
     onSubmit: (values: CreateCourseForm) => Promise<void>
 }
