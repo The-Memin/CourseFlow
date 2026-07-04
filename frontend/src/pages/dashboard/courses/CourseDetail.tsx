@@ -5,37 +5,20 @@ import { statusConfig } from "@/domain/course/course-status";
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 import BackButton from "@/components/shared/BackButton";
 import { priorityConfig } from "@/domain/goal/goal-priority";
-import { useEffect, useState } from "react";
-import { courseService } from "@/services/course.service";
-import type { Course } from "@/types/course";
+
 import { Loader2 } from "lucide-react";
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import NotFound from "@/components/shared/NotFound";
+import { useCourse } from "@/hooks/useCourse";
 
 export default function CourseDetail() {
-  const [course, setCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { id } = useParams<{ id: string }>();
 
-  useEffect(() => {
-      const fetchCourse = async () => {
-          try {
-              const data = await courseService.getCourseById(id!);
-              setCourse(data);
-          } catch {
-              setError("Failed to load course.");
-          } finally {
-              setLoading(false);
-          }
-      };
+  const { course, isLoading, isError } = useCourse(id!);
 
-      fetchCourse();
-  }, [id]);
+  if (isLoading) return <Loader2 className="animate-spin mr-2 h-4 w-4"/>;
 
-  if (loading) return <Loader2 className="animate-spin mr-2 h-4 w-4"/>;
-;
-  if (error) return <ErrorMessage message={error} />;
+  if (isError) return <ErrorMessage message="Failed to load course." />;
 
   if (!course) return <NotFound />;
 

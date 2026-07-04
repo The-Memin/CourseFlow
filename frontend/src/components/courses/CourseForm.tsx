@@ -40,17 +40,12 @@ export default function CourseForm({ onSubmit }: CourseFormProps){
     });
 
     const handleFormSubmit = async (values: CreateCourseForm) => {
-      try{
-        await onSubmit(values);
-        form.reset({
-          name: "",
-          description: "",
-          goals: [{ ...emptyGoal }],
-        });
-        toast.success("Course created successfully");
-      }catch{
-        toast.error("Failed to create course");
-      }
+      await onSubmit(values);
+      form.reset({
+        name: "",
+        description: "",
+        goals: [{ ...emptyGoal }],
+      });
     };
 
     // Codigo para el correcto funcionamiento del componente
