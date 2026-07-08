@@ -3,6 +3,7 @@ package dev.guillermojm.student_management.dto;
 import dev.guillermojm.student_management.enums.GoalPriority;
 import dev.guillermojm.student_management.enums.GoalUnit;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record GoalResponseDTO(
@@ -12,5 +13,7 @@ public record GoalResponseDTO(
         GoalUnit goalUnit,
         GoalPriority priority,
         Integer targetValue,
-        Integer currentValue
+        Integer currentValue,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ){}

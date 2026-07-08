@@ -9,6 +9,9 @@ import {
 import type { AuthSession } from "@/types/auth-session";
 
 
+import { type RegisterResponseDto } from "@/dto/auth/register.response.dto";
+import { type LoginResponseDto } from "@/dto/auth/login.response.dto";
+
 interface AuthProviderProps{
     children: ReactNode
 }
@@ -16,16 +19,23 @@ interface AuthProviderProps{
 export default function AuthProvider({ children }: AuthProviderProps) {
     const [session, setSession] = useState<AuthSession | null>(() => getSession());
 
-    const login = async(email: string, password: string) => {
-        const response = await authService.login({ email, password });
-
+    const setAuthenticatedSession = (response: RegisterResponseDto | LoginResponseDto) => {
         const session = {
-            token: response.accessToken,
+            token: response.token,
             user: response.user
         };
         saveSession(session);
-
         setSession(session);
+    };
+
+    const login = async(email: string, password: string) => {
+        const response = await authService.login({ email, password });
+        setAuthenticatedSession(response);
+    };
+
+    const register = async(name: string, email: string, password: string) => {
+        const response = await authService.register({ name, email, password });
+        setAuthenticatedSession(response);
     };
 
     const logout = () => {
@@ -41,6 +51,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                 token: session?.token ?? null,
                 isAuthenticated: !!session,
                 login,
+                register,
                 logout,
             }}
         >

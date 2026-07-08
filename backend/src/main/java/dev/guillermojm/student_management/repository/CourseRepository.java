@@ -1,6 +1,7 @@
 package dev.guillermojm.student_management.repository;
 
 import dev.guillermojm.student_management.entity.Course;
+import dev.guillermojm.student_management.entity.Student;
 import dev.guillermojm.student_management.enums.CourseStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,9 @@ import java.util.UUID;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
     Optional<Course> findByUuidAndStudent_Uuid(UUID uuid,  UUID studentUuid);
+    Optional<Course> findByUuidAndStudent(UUID courseUuid, Student student);
     List<Course> findByStudentUuid(UUID studentUuid);
+    List<Course> findByStudent(Student student);
     List<Course> findByStudentUuidAndStatus(
             UUID studentUuid,
             CourseStatus status

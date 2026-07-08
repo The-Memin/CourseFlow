@@ -1,4 +1,4 @@
-import type { GoalResponseDto } from "./goal-response.dto";
+import type { GoalResponseDto } from "../goal/goal-response.dto";
 
 export interface CourseResponseDto{
     uuid: string;

@@ -1,6 +1,6 @@
 
 export interface GoalResponseDto{
-    id: string;
+    uuid: string;
     name: string;
     description: string;
 

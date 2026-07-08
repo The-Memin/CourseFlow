@@ -10,7 +10,6 @@ export class ApiClient{
 
     private getHeaders(){
         const session = getSession();
-
         return {
             "Content-Type": "application/json",
             ...(session?.token && {
@@ -20,7 +19,17 @@ export class ApiClient{
     }
 
     async get<T>(endpoint: string): Promise<T>{
-        const response = await axios.get(`${this.baseUrl}${endpoint}`, { ...this.getHeaders });
+        const response = await axios.get(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() });
+        return response.data;
+    }
+
+    async post<T>(endpoint: string, data: any): Promise<T>{
+        const response = await axios.post(`${this.baseUrl}${endpoint}`, data, { headers: this.getHeaders() });
+        return response.data;
+    }
+
+    async delete<T>(endpoint: string): Promise<T>{
+        const response = await axios.delete(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() });
         return response.data;
     }
 }

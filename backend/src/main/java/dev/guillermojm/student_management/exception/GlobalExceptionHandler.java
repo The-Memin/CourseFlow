@@ -1,13 +1,14 @@
 package dev.guillermojm.student_management.exception;
 
 import dev.guillermojm.student_management.dto.ErrorResponseDTO;
+import tools.jackson.databind.exc.InvalidFormatException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -18,64 +19,88 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponseDTO handleValidationErrors(MethodArgumentNotValidException ex){
-        Map<String, String> errors = new HashMap<>();
+    public ErrorResponseDTO handleValidationErrors(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
+
+        Map<String, Object> details = new HashMap<>();
 
         ex.getBindingResult()
                 .getFieldErrors()
-                .forEach((error) ->
-                        errors.put(
+                .forEach(error ->
+                        details.put(
                                 error.getField(),
                                 error.getDefaultMessage()
                         ));
-        return new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
                 "Validation failed",
-                errors
+                "One or more fields are invalid.",
+                request.getRequestURI(),
+                details
         );
     }
 
     @ExceptionHandler(ValueNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDTO handleValueNotFound(ValueNotFoundException ex){
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
+    public ErrorResponseDTO handleValueNotFound(
+            ValueNotFoundException ex,
+            HttpServletRequest request) {
 
-        return new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "Resource not found",
                 ex.getMessage(),
+                request.getRequestURI(),
                 null
         );
     }
 
-
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDTO handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException ex) {
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
 
-        Map<String, String> errors = new HashMap<>();
-        String message = "Invalid request payload";
+        Map<String, Object> details = new HashMap<>();
+        String message = "Malformed request body.";
 
         if (ex.getCause() instanceof InvalidFormatException ife) {
 
-            String fieldName = ife.getPath().isEmpty()
+            String field = ife.getPath().isEmpty()
                     ? "unknown"
                     : ife.getPath().get(0).getPropertyName();
 
-            errors.put(fieldName, "Invalid value");
+            details.put(field, "Invalid value");
 
-            message = "Field '" + fieldName + "' contains an invalid value";
+            message = "Field '%s' contains an invalid value."
+                    .formatted(field);
         }
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                message,
+                request.getRequestURI(),
+                details.isEmpty() ? null : details
+        );
+    }
+
+    private ErrorResponseDTO buildResponse(
+            HttpStatus status,
+            String error,
+            String message,
+            String path,
+            Map<String, Object> details) {
 
         return new ErrorResponseDTO(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
+                status.value(),
+                error,
                 message,
-                errors
+                path,
+                details
         );
     }
 }

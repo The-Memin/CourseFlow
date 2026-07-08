@@ -12,8 +12,7 @@ public record CourseRequestDTO(
         String name,
 
         String description,
-
-        @NotNull
+        
         CourseStatus status,
 
         @Size(min = 1, max = 10)

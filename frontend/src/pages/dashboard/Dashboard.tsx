@@ -1,20 +1,33 @@
 import StatsCard from "@/components/dashboard/StatsCard";
 import CourseCard from "@/components/courses/CourseCard";
-import { mockCourses } from "@/mocks/courses";
 
-import { calculateCourseProgress } from "@/domain/course/course-progress";
+
+import { useCourses } from "@/hooks/useCourses";
 
 export default function Dashboard() {
-  const totalCourses = mockCourses.length;
-  const activeCourses = mockCourses.filter((c) => c.status === "IN_PROGRESS").length;
-  const completedCourses = mockCourses.filter((c) => c.status === "COMPLETED").length;
+  const {
+    isLoading,
+    isError,
+    stats,
+    courses
+  } = useCourses();
 
-  const averageProgress = Math.round(
-        mockCourses.reduce((acc, course) =>
-          acc + calculateCourseProgress(course)
-        , 0
-      ) / totalCourses
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
     );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Error loading courses. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -34,22 +47,22 @@ export default function Dashboard() {
       >
         <StatsCard
           title="Total Courses"
-          value={totalCourses}
+          value={stats.total}
         />
 
         <StatsCard
           title="Active Courses"
-          value={activeCourses}
+          value={stats.active}
         />
 
         <StatsCard
           title="Completed"
-          value={completedCourses}
+          value={stats.completed}
         />
 
         <StatsCard
           title="Average Progress"
-          value={`${averageProgress}%`}
+          value={`${stats.average}%`}
         />
       </section>
 
@@ -66,7 +79,7 @@ export default function Dashboard() {
           xl:grid-cols-3
         "
         >
-          {mockCourses.slice(0, 3).map((course) => (
+          {courses.slice(0, 3).map((course) => (
             <CourseCard
               key={course.id}
               course={course}

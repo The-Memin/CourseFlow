@@ -1,12 +1,20 @@
 import CourseForm from "@/components/courses/CourseForm";
 import { toCreateCourseRequest } from "@/mappers/course.mapper";
 import type { CreateCourseForm } from "@/schemas/course.schema";
-import { courseService } from "@/services/course.service";
+import { useNavigate } from "react-router-dom";
+import { useCreateCourse } from "@/hooks/useCreateUser";
 
 export default function CreateCourse() {
+  const {
+    mutate,
+   } = useCreateCourse();
+
+   const navigate= useNavigate();
+
   const handleCreateCourse = async (values: CreateCourseForm) => {
     const mapperValues = toCreateCourseRequest(values);
-    const result = await courseService.create(mapperValues);
+    mutate(mapperValues);
+    navigate("/dashboard/courses");
   };
 
   return (

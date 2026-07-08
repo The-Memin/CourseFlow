@@ -8,10 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import Topbar from "@/components/dashboard/Topbar";
+import { useState } from "react";
+
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 export default function Login() {
 	const { login } = useAuth();
 	const navigate = useNavigate();
+	const [error, setError] = useState<string | null>(null);
 
 	const form = useForm<LoginFormType>({
 		resolver: zodResolver(loginSchema),
@@ -31,9 +35,19 @@ export default function Login() {
 			);
 			navigate("/dashboard");
 		} catch (error) {
-			console.log(error);
+			console.error(error);
+			setError("Invalid email or password");
 		}
 	};
+
+	if (error) {
+		return (
+			<div className="min-h-screen bg-background">
+				<Topbar />
+				<ErrorMessage message={error} />
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -122,9 +136,17 @@ export default function Login() {
 
 						<div className="mt-6 text-center">
 							<p className="text-sm text-muted-foreground">
-								Secure access to your dashboard
+								Don't have an account?{" "}
+								<button
+									type="button"
+									onClick={() => navigate("/register")}
+									className="text-primary hover:underline transition-colors"
+								>
+									Create an account
+								</button>
 							</p>
 						</div>
+
 					</div>
 				</div>
 			</div>

@@ -1,41 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCourses } from "@/hooks/useCourses";
 
 import CourseCard from "@/components/courses/CourseCard";
 import CourseFilters from "@/components/courses/CourseFilters";
 import EmptyCourses from "@/components/courses/EmptyCourses";
 
-import { courseService } from "@/services/course.service";
-import { type Course } from "@/types/course";
-
 export default function Courses() {
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("ALL");
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  useEffect(() => {
-    async function getCourses() {
-      const data = await courseService.getCourses();
-      console.log(data);
-      setCourses(data);
-    }
-    getCourses();
-
-  }, []);
+  const {
+    filteredCourses,
+    setSearch,
+    setStatus,
+    search,
+    status,
+    isLoading,
+    isError,
+  } = useCourses();
 
 
-  const filteredCourses = useMemo(() => {
-    return courses.filter((course) => {
-      	const matchesSearch = course.name
-          						.toLowerCase()
-          						.includes(search.toLowerCase());
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading courses.</div>;
 
-      	const matchesStatus = status === "ALL"
-          						? true
-          						: course.status === status;
 
-      return (matchesSearch && matchesStatus);
-    });
-  }, [search, status, courses]);
 
   return (
     <div className="space-y-6">

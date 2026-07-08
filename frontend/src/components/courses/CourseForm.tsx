@@ -1,8 +1,7 @@
 import { type CreateCourseForm, createCourseSchema } from "@/schemas/course.schema";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { emptyGoal } from "@/constants/goal";
-import { FormProvider, useFieldArray } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -11,8 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import GoalFormCard from "@/components/courses/forms/GoalFormCard";
 import { Button } from "@/components/ui/button";
-
-import { toast } from "sonner";
 
 interface CourseFormProps {
     onSubmit: (values: CreateCourseForm) => Promise<void>
@@ -40,17 +37,12 @@ export default function CourseForm({ onSubmit }: CourseFormProps){
     });
 
     const handleFormSubmit = async (values: CreateCourseForm) => {
-      try{
-        await onSubmit(values);
-        form.reset({
-          name: "",
-          description: "",
-          goals: [{ ...emptyGoal }],
-        });
-        toast.success("Course created successfully");
-      }catch{
-        toast.error("Failed to create course");
-      }
+      await onSubmit(values);
+      form.reset({
+        name: "",
+        description: "",
+        goals: [{ ...emptyGoal }],
+      });
     };
 
     // Codigo para el correcto funcionamiento del componente
