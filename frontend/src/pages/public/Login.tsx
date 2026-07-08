@@ -136,9 +136,17 @@ export default function Login() {
 
 						<div className="mt-6 text-center">
 							<p className="text-sm text-muted-foreground">
-								Secure access to your dashboard
+								Don't have an account?{" "}
+								<button
+									type="button"
+									onClick={() => navigate("/register")}
+									className="text-primary hover:underline transition-colors"
+								>
+									Create an account
+								</button>
 							</p>
 						</div>
+
 					</div>
 				</div>
 			</div>

@@ -55,4 +55,14 @@ public class Goal extends BaseEntity {
             uuid = UUID.randomUUID();
         }
     }
+
+    public Goal(String name, String description, GoalUnit goalUnit, GoalPriority priority, Integer targetValue, Integer currentValue, Course course) {
+        this.name = name;
+        this.description = description;
+        this.goalUnit = goalUnit;
+        this.priority = priority;
+        this.targetValue = targetValue;
+        this.currentValue = currentValue;
+        this.course = course;
+    }
 }

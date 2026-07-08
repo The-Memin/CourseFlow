@@ -14,6 +14,8 @@ import {
   calculateCourseProgress,
 } from "@/domain/course/course-progress";
 import { Link } from "react-router-dom";
+import { EllipsisVertical } from "lucide-react";
+import { DropdownButton } from "../shared/DropdownButton";
 
 interface Props {
   course: Course;
@@ -26,10 +28,13 @@ export default function CourseCard({ course }: Props) {
   return (
     <Link to={`/dashboard/courses/${course.id}`}>
       <Card className="hover:scale-[1.015] transition-all">
-        <CardHeader>
+        <CardHeader className="flex flex-row justify-between relative">
           <CardTitle>
             {course.name}
           </CardTitle>
+          <DropdownButton deleteAction={() => console.log("Delete course")}>
+                <EllipsisVertical />
+          </DropdownButton>
         </CardHeader>
 
         <CardContent className="space-y-4">

@@ -13,24 +13,41 @@ import { goalUnitLabels } from "@/domain/goal/goal-unit";
 import { calculateGoalProgress } from "@/domain/course/course-progress";
 import { priorityConfig } from "@/domain/goal/goal-priority";
 import type { GoalPriority } from "@/types/goal";
+import { EllipsisVertical } from "lucide-react";
+import { DropdownButton } from "../shared/DropdownButton";
+
+import { useGoal } from "@/hooks/useGoal";
 
 interface Props {
   goal: Goal;
+  courseId: string;
 }
 
-export default function GoalCard({ goal }: Props) {
+export default function GoalCard({ goal, courseId }: Props) {
     const progress = calculateGoalProgress(goal.currentValue, goal.targetValue);
     const priority = priorityConfig[goal.priority as GoalPriority];
+    const { deleteGoalMutation } = useGoal({ courseId: courseId });
+
+
+    const onDeleteCard = () => {
+        deleteGoalMutation.mutate(goal.id);
+    };
 
     return (
         <Card>
-        <CardHeader>
-            <CardTitle>
-            {goal.name}
-            </CardTitle>
-            <Badge className={priority.className}>
-                {priority.label}
-            </Badge>
+        <CardHeader className="flex flex-row justify-between relative">
+            <div>
+                <CardTitle>
+                {goal.name}
+                </CardTitle>
+                <Badge className={priority.className}>
+                    {priority.label}
+                </Badge>
+            </div>
+            <DropdownButton deleteAction={onDeleteCard}>
+                <EllipsisVertical />
+            </DropdownButton>
+
         </CardHeader>
 
         <CardContent className="space-y-4">

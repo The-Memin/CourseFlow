@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record GoalRequestDTO(
+import java.util.UUID;
+
+public record GoalCreateRequestDTO(
         @NotBlank(message = "course name is required")
         String name,
 
@@ -24,6 +26,6 @@ public record GoalRequestDTO(
         Integer targetValue,
 
         @NotNull
-        @Min(0)
-        Integer currentValue
-){}
+        UUID courseUuid
+) {
+}
