@@ -4,7 +4,7 @@ import GoalCard from "@/components/courses/GoalCard";
 import { statusConfig } from "@/domain/course/course-status";
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 import BackButton from "@/components/shared/BackButton";
-import { DialogForm } from "@/components/dialogs/DialogForm";
+import { DialogGoalForm } from "@/components/dialogs/DialogGoalForm";
 import { priorityConfig } from "@/domain/goal/goal-priority";
 
 import { Loader2 } from "lucide-react";
@@ -13,16 +13,10 @@ import NotFound from "@/components/shared/NotFound";
 import { useCourse } from "@/hooks/useCourse";
 import { Ellipsis } from "lucide-react";
 
-import { GoalForm } from "@/components/goals/GoalForm";
-import { useGoal } from "@/hooks/useGoal";
-
 import { DropdownButton } from "@/components/shared/DropdownButton";
-import type { CreateGoalForm } from "@/schemas/goal.schema";
 
 export default function CourseDetail() {
   const { id } = useParams<{ id: string }>();
-  const courseId = id !== undefined ? id:"";
-  const { addGoalMutation } = useGoal({ courseId });
   const { course, isLoading, isError } = useCourse(id!);
 
   if (isLoading) return <Loader2 className="animate-spin mr-2 h-4 w-4"/>;
@@ -40,11 +34,6 @@ export default function CourseDetail() {
                           priorityConfig[b.priority].order -
                           priorityConfig[a.priority].order
                       );
-
-  const onSubmitGoal = (values: CreateGoalForm) => {
-    console.log(values);
-    addGoalMutation.mutate(values);
-  };
 
   return (
     <div className="space-y-8">
@@ -131,14 +120,7 @@ export default function CourseDetail() {
         </div>
 
         <div className="mt-4">
-          <DialogForm
-            title="Create Goal"
-            description="Complete the goal information."
-            textButton="Add goal"
-            formId="goal-form"
-          >
-            <GoalForm onSubmit={onSubmitGoal}/>
-          </DialogForm>
+          <DialogGoalForm courseId={course.id}/>
         </div>
       </section>
 

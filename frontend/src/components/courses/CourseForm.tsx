@@ -1,8 +1,7 @@
 import { type CreateCourseForm, createCourseSchema } from "@/schemas/course.schema";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { emptyGoal } from "@/constants/goal";
-import { FormProvider, useFieldArray } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";

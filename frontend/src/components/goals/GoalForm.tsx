@@ -1,4 +1,4 @@
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import {
     Select,
     SelectTrigger,
@@ -8,23 +8,15 @@ import {
 } from "../ui/select";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { goalSchema, type CreateGoalForm } from "@/schemas/goal.schema";
-
-import { emptyGoal } from "@/constants/goal";
+import { type CreateGoalForm } from "@/schemas/goal.schema";
+import { useFormContext } from "react-hook-form";
 
 interface Props{
     onSubmit: (values: CreateGoalForm) => void,
 }
 
 export function GoalForm({ onSubmit }: Props){
-    const form = useForm<CreateGoalForm>({
-        resolver: zodResolver(goalSchema),
-        defaultValues: {
-            ...emptyGoal,
-        }
-    });
+    const form = useFormContext<CreateGoalForm>();
 
     return(
         <form id="goal-form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     Dialog,
@@ -11,17 +11,30 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import type { ReactNode } from "react";
+import { Loader2 } from "lucide-react";
 
 interface Props{
     children: ReactNode,
     textButton: string,
     title: string,
     description: string,
-    formId: string
+    formId: string,
+    isSubmitting: boolean,
+    open: boolean,
+    setOpen: (open: boolean) => void
 }
 
-export function DialogForm({ children, textButton, title, description, formId }: Props){
-    const [open, setOpen] = useState(false);
+export function DialogForm({
+    children,
+    textButton,
+    title,
+    description,
+    formId,
+    isSubmitting,
+    open,
+    setOpen
+}: Props
+){
 
     return(
         <Dialog open={open} onOpenChange={setOpen}>
@@ -38,8 +51,20 @@ export function DialogForm({ children, textButton, title, description, formId }:
                 </DialogHeader>
                 {children}
                 <DialogFooter>
-                <Button className="cursor-pointer" onClick={() => setOpen(false)} variant="outline">Cancel</Button>
-                <Button type="submit" form={formId} className="cursor-pointer" >Save</Button>
+                    <Button className="cursor-pointer" onClick={() => setOpen(false)} variant="outline">Cancel</Button>
+                    <Button
+                        type="submit"
+                        form={formId}
+                        className="cursor-pointer"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting && (<Loader2 className="animate-spin mr-2 h-4 w-4"/>)}
+                        {
+                            isSubmitting
+                            ? "Creating..."
+                            : "Save Goal"
+                        }
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
