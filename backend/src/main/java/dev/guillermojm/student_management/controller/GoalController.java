@@ -1,7 +1,6 @@
 package dev.guillermojm.student_management.controller;
 
-import dev.guillermojm.student_management.dto.GoalCreateRequestDTO;
-import dev.guillermojm.student_management.dto.GoalRequestDTO;
+import dev.guillermojm.student_management.dto.GoalNewRequestDTO;
 import dev.guillermojm.student_management.dto.GoalResponseDTO;
 import dev.guillermojm.student_management.service.GoalService;
 import jakarta.validation.Valid;
@@ -20,7 +19,7 @@ public class GoalController {
     private final GoalService  goalService;
 
     @PostMapping
-    public ResponseEntity<GoalResponseDTO> createGoal(@Valid @RequestBody GoalCreateRequestDTO goalDto){
+    public ResponseEntity<GoalResponseDTO> createGoal(@Valid @RequestBody GoalNewRequestDTO goalDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 goalService.createGoal(goalDto)
         );
@@ -41,14 +40,14 @@ public class GoalController {
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<GoalResponseDTO> updateGoal(@PathVariable UUID uuid, @Valid @RequestBody GoalRequestDTO dto){
+    public ResponseEntity<GoalResponseDTO> updateGoal(@PathVariable UUID uuid, @Valid @RequestBody GoalNewRequestDTO dto){
         return ResponseEntity.ok(
                 goalService.updateGoal(uuid, dto)
         );
     }
 
     @PatchMapping("/{uuid}")
-    public ResponseEntity<GoalResponseDTO> patchGoal(@PathVariable UUID uuid, @RequestBody GoalRequestDTO goalRequestDTO){
+    public ResponseEntity<GoalResponseDTO> patchGoal(@PathVariable UUID uuid, @RequestBody GoalNewRequestDTO goalRequestDTO){
         return ResponseEntity.ok(
                 goalService.patchGoal(uuid, goalRequestDTO)
         );

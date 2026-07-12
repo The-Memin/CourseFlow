@@ -1,7 +1,6 @@
 package dev.guillermojm.student_management.dto;
 
 import dev.guillermojm.student_management.enums.CourseStatus;
-import dev.guillermojm.student_management.enums.GoalUnit;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 

@@ -4,7 +4,7 @@ import type { CreateGoalForm } from "@/schemas/goal.schema";
 
 import { toCreateGoalRequest } from "@/mappers/goal.mapper";
 
-export function useGoal({ courseId }: {courseId: string}) {
+export function useGoal(courseId?:string) {
     const queryClient = useQueryClient();
 
     const deleteGoalMutation = useMutation({
@@ -15,7 +15,7 @@ export function useGoal({ courseId }: {courseId: string}) {
     });
 
     const addGoalMutation = useMutation({
-        mutationFn: (newGoal: CreateGoalForm) => goalService.createGoal(toCreateGoalRequest(newGoal, courseId)),
+        mutationFn: (newGoal: CreateGoalForm) => goalService.createGoal(toCreateGoalRequest(newGoal, courseId!)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["course", courseId] });
         }

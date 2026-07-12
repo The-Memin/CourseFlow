@@ -1,7 +1,7 @@
 package dev.guillermojm.student_management.service;
 
 import dev.guillermojm.student_management.auth.service.AuthenticatedUserService;
-import dev.guillermojm.student_management.dto.GoalCreateRequestDTO;
+import dev.guillermojm.student_management.dto.GoalNewRequestDTO;
 import dev.guillermojm.student_management.dto.GoalRequestDTO;
 import dev.guillermojm.student_management.dto.GoalResponseDTO;
 import dev.guillermojm.student_management.entity.Course;
@@ -24,7 +24,7 @@ public class GoalService {
     private final AuthenticatedUserService authenticatedUserService;
     private final CourseAccessService courseAccessService;
 
-    public GoalResponseDTO createGoal(GoalCreateRequestDTO dto) {
+    public GoalResponseDTO createGoal(GoalNewRequestDTO dto) {
         Course course = courseAccessService.getOwnedCourse(dto.courseUuid());
 
         Goal goal = new Goal(
@@ -57,7 +57,7 @@ public class GoalService {
         return goalMapper.toResponseDto(goal);
     }
 
-    public GoalResponseDTO updateGoal(UUID uuid, GoalRequestDTO dto){
+    public GoalResponseDTO updateGoal(UUID uuid, GoalNewRequestDTO dto){
         Goal goal = getOwnerGoal(uuid);
 
         goal.setName(dto.name());
@@ -71,7 +71,7 @@ public class GoalService {
         return goalMapper.toResponseDto(goalSaved);
     }
 
-    public GoalResponseDTO patchGoal(UUID uuid, GoalRequestDTO goalRequestDTO){
+    public GoalResponseDTO patchGoal(UUID uuid, GoalNewRequestDTO goalRequestDTO){
         Goal goal = getOwnerGoal(uuid);
 
         if(goalRequestDTO.name() != null)

@@ -5,19 +5,23 @@ import { statusConfig } from "@/domain/course/course-status";
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 import BackButton from "@/components/shared/BackButton";
 import { DialogGoalForm } from "@/components/dialogs/DialogGoalForm";
-import { priorityConfig } from "@/domain/goal/goal-priority";
 
 import { Loader2 } from "lucide-react";
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import NotFound from "@/components/shared/NotFound";
 import { useCourse } from "@/hooks/useCourse";
+import { useGoal } from "@/hooks/useGoal";
+import { useDeleteDialog } from "@/hooks/useDeleteDialog";
 import { Ellipsis } from "lucide-react";
 
 import { DropdownButton } from "@/components/shared/DropdownButton";
+import { DeleteDialog } from "@/components/shared/DeleteDialog";
 
 export default function CourseDetail() {
   const { id } = useParams<{ id: string }>();
-  const { course, isLoading, isError } = useCourse(id!);
+  const { course, isLoading, isError } = useCourse(id);
+  const { open, openDeleteDialog, closeDeleteDialog, selectedElementId, setSelectedElementId } = useDeleteDialog();
+  const { deleteGoalMutation } = useGoal(id);
 
   if (isLoading) return <Loader2 className="animate-spin mr-2 h-4 w-4"/>;
 
@@ -26,13 +30,18 @@ export default function CourseDetail() {
   if (!course) return <NotFound />;
 
 
+  const handleDeleteGoalAction = (goalId: string) => {
+    setSelectedElementId(goalId);
+    openDeleteDialog();
+  };
+
   const progress = calculateCourseProgress(course);
   const status = statusConfig[course.status];
 
   const sortedGoals = [...course.goals].sort(
                         (a, b) =>
-                          priorityConfig[b.priority].order -
-                          priorityConfig[a.priority].order
+                          new Date(a.createdAt).getTime() -
+                          new Date(b.createdAt).getTime()
                       );
 
   return (
@@ -40,7 +49,7 @@ export default function CourseDetail() {
       <div className="flex items-center justify-between">
         <BackButton label="Courses" to="/dashboard/courses"/>
 
-        <DropdownButton deleteAction={() => console.log("Delete course")}>
+        <DropdownButton onDeleteAction={() => console.log("Delete course")}>
           <Ellipsis />
         </DropdownButton>
 
@@ -98,7 +107,7 @@ export default function CourseDetail() {
               <GoalCard
                 key={goal.id}
                 goal={goal}
-                courseId={course.id}
+                onDeleteGoalAction={() => handleDeleteGoalAction(goal.id)}
               />
             ))
           ) : (
@@ -121,6 +130,17 @@ export default function CourseDetail() {
 
         <div className="mt-4">
           <DialogGoalForm courseId={course.id}/>
+          <DeleteDialog
+            title="Delete Goal?"
+            target="goal"
+            open={open}
+            setOpen={closeDeleteDialog}
+            onDelete={() => {
+              if (!selectedElementId) return;
+              deleteGoalMutation.mutate(selectedElementId);
+              closeDeleteDialog();
+            }}
+          />
         </div>
       </section>
 

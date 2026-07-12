@@ -16,7 +16,7 @@ interface Props{
 
 
 export function DialogGoalForm({ courseId }: Props){
-    const { addGoalMutation } = useGoal({ courseId });
+    const { addGoalMutation } = useGoal(courseId);
     const [open, setOpen] = useState(false);
     const form = useForm<CreateGoalForm>({
         resolver: zodResolver(goalSchema),
@@ -26,6 +26,7 @@ export function DialogGoalForm({ courseId }: Props){
     });
 
     const onSubmitGoal = async (values: CreateGoalForm) => {
+        console.log(values);
         addGoalMutation.mutate(values);
         setOpen(false);
     };

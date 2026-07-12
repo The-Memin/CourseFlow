@@ -12,7 +12,6 @@ import dev.guillermojm.student_management.mapper.CourseMapper;
 import dev.guillermojm.student_management.mapper.GoalMapper;
 import dev.guillermojm.student_management.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 

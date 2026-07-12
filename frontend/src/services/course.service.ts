@@ -22,6 +22,11 @@ class CourseService{
         const response = await apiClient.post("/courses", request);
         return response;
     }
+
+    async deleteCourse(id: string){
+        const response = await apiClient.delete(`/courses/${id}`);
+        return response;
+    }
 }
 
 export const courseService = new CourseService();

@@ -37,7 +37,7 @@ export function DeleteDialog({ title, target, open, setOpen, onDelete }: Props) 
             Cancel
           </AlertDialogCancel>
 
-          <AlertDialogAction className="cursor-pointer" onClick={() => onDelete()}>
+          <AlertDialogAction className="cursor-pointer" onClick={onDelete}>
             Yes, delete
           </AlertDialogAction>
         </AlertDialogFooter>

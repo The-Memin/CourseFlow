@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { courseService } from "@/services/course.service";
 import { calculateCourseProgress } from "@/domain/course/course-progress";
 
@@ -7,9 +7,19 @@ export function useCourses() {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("ALL");
 
+    const queryClient = useQueryClient();
+
     const query = useQuery({
         queryKey: ["courses"],
         queryFn: courseService.getCourses,
+    });
+
+    const deleteCourseMutation = useMutation({
+        mutationFn: (courseId: string) => courseService.deleteCourse(courseId),
+        onSuccess: (courseId) => {
+            console.log(courseId);
+            queryClient.invalidateQueries({  queryKey: ["courses"] });
+        }
     });
 
     const courses = query.data ?? [];
@@ -67,5 +77,6 @@ export function useCourses() {
         setSearch,
         search,
         status,
+        deleteCourseMutation
     };
 }

@@ -3,6 +3,8 @@ import { useCourses } from "@/hooks/useCourses";
 import CourseCard from "@/components/courses/CourseCard";
 import CourseFilters from "@/components/courses/CourseFilters";
 import EmptyCourses from "@/components/courses/EmptyCourses";
+import { DeleteDialog } from "@/components/shared/DeleteDialog";
+import { useDeleteDialog } from "@/hooks/useDeleteDialog";
 
 export default function Courses() {
   const {
@@ -13,13 +15,23 @@ export default function Courses() {
     status,
     isLoading,
     isError,
+    deleteCourseMutation
   } = useCourses();
 
+  const { open,
+    openDeleteDialog,
+    closeDeleteDialog,
+    selectedElementId,
+    setSelectedElementId
+  }  = useDeleteDialog();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading courses.</div>;
 
-
+  const handleDeleteCourseAction = (courseId: string) => {
+    setSelectedElementId(courseId);
+    openDeleteDialog();
+  };
 
   return (
     <div className="space-y-6">
@@ -49,11 +61,23 @@ export default function Courses() {
               <CourseCard
                 key={course.id}
                 course={course}
+                onDeleteCourseAction={() => handleDeleteCourseAction(course.id)}
               />
             )
           )}
         </div>
       )}
+      <DeleteDialog
+        title="Delete Course?"
+        target="course"
+        open={open}
+        setOpen={closeDeleteDialog}
+        onDelete={() => {
+          if (!selectedElementId) return;
+          deleteCourseMutation.mutate(selectedElementId);
+          closeDeleteDialog();
+        }}
+      />
     </div>
   );
 }

@@ -9,16 +9,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Pen, Trash2Icon } from "lucide-react";
 
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
-import { DeleteDialog } from "./DeleteDialog";
+interface Props{
+  children: ReactNode,
+  onDeleteAction: () => void
+}
 
-export function DropdownButton({ children, deleteAction }: { children: ReactNode; deleteAction: () => void }) {
-  const [open, setOpen] = useState(false);
-
-  const onChangeOpen = () => {
-    setOpen(preview => !preview);
-  };
+export function DropdownButton({ children, onDeleteAction }: Props) {
 
   return (
     <>
@@ -42,12 +40,15 @@ export function DropdownButton({ children, deleteAction }: { children: ReactNode
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              className="cursor-pointer"
-              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
               onSelect={(e) => {
                 e.preventDefault();
-                setOpen(true);
+                onDeleteAction();
               }}
+              className="cursor-pointer"
+              variant="destructive"
             >
               <Trash2Icon />
               Trash
@@ -55,13 +56,6 @@ export function DropdownButton({ children, deleteAction }: { children: ReactNode
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DeleteDialog
-        title="Delete Goal?"
-        target="goal"
-        open={open}
-        setOpen={onChangeOpen}
-        onDelete={deleteAction}
-      />
     </>
   );
 }
